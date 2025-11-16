@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { ChatState } from "../../Context/ChatProvider";
 import { Box, Stack, Text, useToast, Button } from "@chakra-ui/react";
-import axios from "axios";
+import API from "../../config/axios";
 import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "../ChatLoading";
 import { getSender } from "../../config/ChatLogics";
@@ -17,7 +17,7 @@ const MyChats = ({ fetchAgain }) => {
 
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.get("/api/chat", config);
+      const { data } = await API.get("/api/chat", config);
       setChats(data);
     } catch (error) {
       toast({

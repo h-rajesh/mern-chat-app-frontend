@@ -12,7 +12,7 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
-import axios from "axios";
+import API from "../config/axios";
 import ScrollableChat from "./ScrollableChat";
 import io from "socket.io-client";
 import Lottie from "react-lottie";
@@ -62,7 +62,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(true);
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
 
-      const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
+      const { data } = await API.get(`/api/message/${selectedChat._id}`, config);
 
       setMessages(data);
       setLoading(false);
@@ -113,7 +113,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
         };
 
-        const { data } = await axios.post(
+        const { data } = await API.post(
           "/api/message",
           { content: newMessage, chatId: selectedChat._id },
           config

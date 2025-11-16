@@ -4,7 +4,7 @@ import React, {useState } from 'react'
 import { ChatState } from '../../Context/ChatProvider';
 import UserBadgeItem from '../userAvatar/UserBadgeItem';
 import { set } from 'mongoose';
-import axios from 'axios';
+import API from '../../config/axios';
 import UserListItem from '../userAvatar/userListItem';
 
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
@@ -47,7 +47,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                     Authorization: `Bearer ${user.token}`,  
                 },
             };
-            const { data } = await axios.put("/api/chat/groupadd", {
+            const { data } = await API.put("/api/chat/groupadd", {
                 chatId: selectedChat._id,
                 userId: user1._id,
             }, config);
@@ -85,7 +85,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.put("/api/chat/groupremove", {
+            const { data } = await API.put("/api/chat/groupremove", {
                 chatId: selectedChat._id,
                 userId: user1._id,
             }, config);
@@ -117,7 +117,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             }
-            const { data } = await axios.put("/api/chat/rename", {
+            const { data } = await API.put("/api/chat/rename", {
                 chatId: selectedChat._id,
                 chatName: groupChatName,
             }, config);
@@ -151,7 +151,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.get(`/api/user?search=${search}`, config);
+            const { data } = await API.get(`/api/user?search=${search}`, config);
             console.log(data);
             setLoading(false);
             setSearchResult(data);

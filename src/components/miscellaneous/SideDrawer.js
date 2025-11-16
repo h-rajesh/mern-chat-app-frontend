@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../../config/axios";
 import {
   Avatar,
   Box,
@@ -74,7 +74,7 @@ const SideDrawer = () => {
         },
       };
 
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await API.get(`/api/user?search=${search}`, config);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -101,7 +101,7 @@ const SideDrawer = () => {
         },
       };
 
-      const { data } = await axios.post(`/api/chat`, { userId }, config);
+      const { data } = await API.post(`/api/chat`, { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) {
         setChats([data, ...chats]);

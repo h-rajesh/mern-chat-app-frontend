@@ -2,7 +2,7 @@ import { Box, Button, FormControl, Input, Modal, ModalBody, ModalCloseButton, Mo
 import React,{useState  } from 'react'
 import { ChatState } from '../../Context/ChatProvider';
 import { set } from 'mongoose';
-import axios from 'axios';
+import API from '../../config/axios';
 import UserListItem from '../userAvatar/userListItem';
 import UserBadgeItem from '../userAvatar/UserBadgeItem';
 
@@ -31,7 +31,7 @@ const GroupChatModal = ({children}) => {
                    Authorization: `Bearer ${user.token}`,
                },
            };
-           const { data } = await axios.get(`/api/user?search=${search}`, config);
+           const { data } = await API.get(`/api/user?search=${search}`, config);
            console.log(data);
            setLoading(false);
               setSearchResult(data);
@@ -63,7 +63,7 @@ const GroupChatModal = ({children}) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-            const { data } = await axios.post(
+            const { data } = await API.post(
                 "/api/chat/group",
                 {
                     name: groupChatName,

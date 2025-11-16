@@ -1,7 +1,7 @@
 import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, VStack ,useToast, position} from '@chakra-ui/react'
 import React from 'react'
 import { useState } from 'react'
-import axios from "axios";
+import API from "../../config/axios";
 import { useHistory } from "react-router-dom";
 
 
@@ -37,7 +37,7 @@ const Login = () => {
                 },
             };
 
-            const { data } = await axios.post(
+            const { data } = await API.post(
                 "/api/user/login",
                 { email, password },
                 config
