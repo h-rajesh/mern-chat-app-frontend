@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 import {
   Avatar,
   Box,
@@ -19,42 +19,49 @@ import {
   Text,
   Tooltip,
   useDisclosure,
-  useToast
-} from '@chakra-ui/react';
-import { BellIcon, ChevronDownIcon } from '@chakra-ui/icons';
-import { ChatState } from '../../Context/ChatProvider';
-import ProfileModal from './ProfileModal';
-import { useHistory } from 'react-router-dom';
-import ChatLoading from '../ChatLoading';
-import UserListItem from '../userAvatar/userListItem';
-import { getSender } from '../../config/ChatLogics';
-import NotificationBadge, { Effect } from "react-notification-badge"
+  useToast,
+  Badge,
+} from "@chakra-ui/react";
+import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import { ChatState } from "../../Context/ChatProvider";
+import ProfileModal from "./ProfileModal";
+import { useHistory } from "react-router-dom";
+import ChatLoading from "../ChatLoading";
+import UserListItem from "../userAvatar/userListItem";
+import { getSender } from "../../config/ChatLogics";
+
 const SideDrawer = () => {
-   
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
-  const { user ,setSelectedChat, selectedChat, chats, setChats ,notification,setNotification} = ChatState();
+
+  const {
+    user,
+    setSelectedChat,
+    chats,
+    setChats,
+    notification,
+    setNotification,
+  } = ChatState();
   const history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
     history.push("/");
-  }
-  const toast = useToast();
+  };
 
-  const handleSearch = async() => {
-    // Logic for searching users
+  const handleSearch = async () => {
     if (!search) {
       toast({
         title: "Please enter something in search",
         status: "warning",
         duration: 5000,
         isClosable: true,
-        position: "top-left"
-      })
+        position: "top-left",
+      });
       return;
     }
 
@@ -68,7 +75,6 @@ const SideDrawer = () => {
       };
 
       const { data } = await axios.get(`/api/user?search=${search}`, config);
-      console.log(data);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -82,9 +88,9 @@ const SideDrawer = () => {
       });
       setLoading(false);
     }
-  }
+  };
 
-  const accessChat = async(userId) => {
+  const accessChat = async (userId) => {
     try {
       setLoadingChat(true);
 
@@ -97,7 +103,10 @@ const SideDrawer = () => {
 
       const { data } = await axios.post(`/api/chat`, { userId }, config);
 
-      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
+      if (!chats.find((c) => c._id === data._id)) {
+        setChats([data, ...chats]);
+      }
+
       setSelectedChat(data);
       setLoadingChat(false);
       onClose();
@@ -112,7 +121,7 @@ const SideDrawer = () => {
       });
       setLoadingChat(false);
     }
-  }
+  };
 
   return (
     <>
@@ -122,37 +131,55 @@ const SideDrawer = () => {
         alignItems="center"
         bg="white"
         w="100%"
-        p="5px 10px 5px 10px"
+        p="5px 10px"
         borderWidth="5px"
       >
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
-          <Button variant="ghost" color={"black"} onClick={onOpen}>
+          <Button variant="ghost" color="black" onClick={onOpen}>
             <i className="fas fa-search"></i>
             <Text d={{ base: "none", md: "flex" }} px={4}>
               Search User
             </Text>
           </Button>
         </Tooltip>
+
         <Text fontSize="2xl" fontFamily="Work sans" color="black">
           Let's Chat
         </Text>
+
         <div>
+          {/* NOTIFICATION MENU */}
           <Menu>
             <MenuButton p={1}>
-              <NotificationBadge
-                count={notification.length}
-                effect={Effect.SCALE}
-              />
-              <BellIcon />
+              <Box position="relative" display="inline-block">
+                <BellIcon boxSize={6} />
+
+                {notification.length > 0 && (
+                  <Badge
+                    colorScheme="red"
+                    borderRadius="full"
+                    position="absolute"
+                    top="-1"
+                    right="-1"
+                    fontSize="0.8em"
+                    px={2}
+                  >
+                    {notification.length}
+                  </Badge>
+                )}
+              </Box>
             </MenuButton>
+
             <MenuList pl={2}>
-              {!notification.length &&
-                "No New Messages"}
+              {!notification.length && "No New Messages"}
               {notification?.map((notif) => (
-                <MenuItem key={notif._id} onClick={() => {
-                  setSelectedChat(notif.chat)
-                  setNotification(notification.filter((n)=>n!==notif))
-                }}>
+                <MenuItem
+                  key={notif._id}
+                  onClick={() => {
+                    setSelectedChat(notif.chat);
+                    setNotification(notification.filter((n) => n !== notif));
+                  }}
+                >
                   {notif.chat.isGroupChat
                     ? `New Message in ${notif.chat.chatName}`
                     : `New Message from ${getSender(user, notif.chat.users)}`}
@@ -160,6 +187,8 @@ const SideDrawer = () => {
               ))}
             </MenuList>
           </Menu>
+
+          {/* PROFILE MENU */}
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
               <Avatar
@@ -169,6 +198,7 @@ const SideDrawer = () => {
                 src={user.pic}
               />
             </MenuButton>
+
             <MenuList>
               <ProfileModal user={user}>
                 <MenuItem>My Profile</MenuItem>
@@ -180,10 +210,12 @@ const SideDrawer = () => {
         </div>
       </Box>
 
+      {/* SEARCH DRAWER */}
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
+
           <DrawerBody>
             <Box display="flex" pb={2}>
               <Input
@@ -194,6 +226,7 @@ const SideDrawer = () => {
               />
               <Button onClick={handleSearch}>Go</Button>
             </Box>
+
             {loading ? (
               <ChatLoading />
             ) : (
@@ -205,6 +238,7 @@ const SideDrawer = () => {
                 />
               ))
             )}
+
             {loadingChat && (
               <Spinner ml="auto" display="flex" color="blue.500" />
             )}
@@ -213,6 +247,6 @@ const SideDrawer = () => {
       </Drawer>
     </>
   );
-}
+};
 
-export default SideDrawer
+export default SideDrawer;
